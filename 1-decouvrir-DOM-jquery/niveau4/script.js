@@ -31,7 +31,7 @@ $(document).ready(function(){
 });
 
 // Fonction pour mettre true et false d'une boolean sans se faire C. 
-function switch(bool) {
+function transform(bool) {
 
   if(bool) return false;
   else return true;

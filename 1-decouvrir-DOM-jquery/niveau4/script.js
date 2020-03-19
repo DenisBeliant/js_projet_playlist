@@ -30,6 +30,14 @@ $(document).ready(function(){
 
 });
 
+// Fonction pour mettre true et false d'une boolean sans se faire C. 
+function switch(bool) {
+
+  if(bool) return false;
+  else return true;
+
+}
+
 // Fonction pour convertir la durée en nombre de secondes :
 function timeToDecimal(t) {
 

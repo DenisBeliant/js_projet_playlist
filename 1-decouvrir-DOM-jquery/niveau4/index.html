@@ -9,21 +9,20 @@
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
     <script src="script.js"> </script>
+    <script src="https://kit.fontawesome.com/9679fc5c88.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     
 </head>
 <body>
     <div id="main">
-      <p>niveau 4</p>
-      <p id="titre"><h1>Lecteur de film </h1> </p>
+      <p id="titre"><h1><i class="fas fa-redo-alt" id="refresh" title='Cliquer pour recharger la playlist'></i>Aucun film selectionné</h1> </p>
+      <progress value='0' max='100'></progress><span id='duree'>0h00m</span>
 
-
+      <div class='boutonsFilm'><i class="fas fa-fast-backward" id='back'></i><i class="fas fa-play" id='play'></i><i class="fas fa-fast-forward" id='next'></i></i></div> <!--class du bouton pause : fas fa-pause --> 
     </div>
     <div id="list">
 
     </div>
-        
-    <button id="refresh">Playlist</button>
     
 </body>
 </html>

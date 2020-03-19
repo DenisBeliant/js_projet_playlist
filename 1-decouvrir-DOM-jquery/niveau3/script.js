@@ -10,7 +10,10 @@ $(document).ready(function(){
         $.get('./playlist.txt', function(playlist) {
            
            playlist = splitFile(playlist);
-  
+
+           listOfMovie.forEach(e => {
+             $('#list ul').append(htmlDivElement(e));
+           });
         });
   
      });
@@ -20,7 +23,7 @@ $(document).ready(function(){
 
 function htmlDivElement(movie){
 
-  var html = "";
+  var html = "<div class='divFilm'><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" durée : "+movie.length+"</div>";
 // completer le code ici
   return html;
 
@@ -28,7 +31,11 @@ function htmlDivElement(movie){
 
 function createMovie(i, n, d){
 
-  var movie = {};
+  var movie = {
+    index: i,
+    name: n,
+    length: d
+  };
 
 // completer le code ici
   return movie;
@@ -42,15 +49,11 @@ function splitFile(data){
 
     movie = e.split(',');
 
-    listOfMovie.push({
-      index: movie[0],
-      name: movie[1],
-      length: movie[2]
-    });
+    
+    addMovie(createMovie(movie[0], movie[1], movie[2]));
     
   });
   
-  console.log(listOfMovie);
 }
 
 function addMovie(m){

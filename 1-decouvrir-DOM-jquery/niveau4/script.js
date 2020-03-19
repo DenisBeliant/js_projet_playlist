@@ -15,6 +15,7 @@ $(document).ready(function(){
            listOfMovie.forEach(e => {
              $('#list').append(htmlDivElement(e));
 
+             // Callback quand on clique sur le bouton play d'un film
              $('#'+e.index).click(function() {
                   console.log(e.name);
                   $('h1').html('Film en cours : '+e.name);

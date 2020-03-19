@@ -1,32 +1,44 @@
 var listOfMovie = [];
 let play = false;
+let visible = false;
 
 $(document).ready(function(){
 
       // completer le code ici
       $('#refresh').click(function() {
 
-        $('#list').empty();
-        listOfMovie = [];
-        
-        $.get('./playlist.txt', function(playlist) {
-           
-           playlist = splitFile(playlist);
+        visible = transform(visible);
+        console.log(visible);
 
-           listOfMovie.forEach(e => {
-             $('#list').append(htmlDivElement(e));
-
-             // Callback quand on clique sur le bouton play d'un film
-             $('#'+e.index).click(function() {
-                  console.log(e.name);
-                  $('h1').html('Film en cours : '+e.name);
-                  $('#duree').html(e.length); 
-             });  
-
-           });
-        });
-
+        if(visible) {
+          
+          $('#list').empty();
+          listOfMovie = [];
+          
+          $.get('./playlist.txt', function(playlist) {
+             
+             playlist = splitFile(playlist);
   
+             listOfMovie.forEach(e => {
+  
+               $('#list').append(htmlDivElement(e));
+  
+               // Callback quand on clique sur le bouton play d'un film
+               $('#'+e.index).click(function() {
+              
+                    $('h1').html('Film en cours : '+e.name);
+                    $('#duree').html(e.length); 
+               });  
+  
+             });
+          });
+
+          $('#list').show('slow');
+
+        }
+
+        else $('#list').hide('slow');
+
      });
 
      // Gestion du bouton de lecture 
@@ -39,6 +51,7 @@ $(document).ready(function(){
 
         console.log(play);
       });
+      
 });
 
 // Fonction pour mettre true et false d'une boolean sans se faire C. 

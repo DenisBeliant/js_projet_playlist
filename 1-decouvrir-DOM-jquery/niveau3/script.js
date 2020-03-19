@@ -11,16 +11,6 @@ $(document).ready(function(){
            
            playlist = splitFile(playlist);
   
-           let listOfMovie = [];
-  
-           playlist.forEach(element => {
-              listOfMovie.push(element);
-           });
-  
-           listOfMovie.forEach(e => {
-                 htmlDivElement(e);
-           });
-  
         });
   
      });
@@ -47,12 +37,20 @@ function createMovie(i, n, d){
 function splitFile(data){
   // completer le code ici
   data = data.split('\n');
-  data.forEach(e => {
-    e.split(',');
-  });
 
-  return data;
+  data.forEach(e => {
+
+    movie = e.split(',');
+
+    listOfMovie.push({
+      index: movie[0],
+      name: movie[1],
+      length: movie[2]
+    });
+    
+  });
   
+  console.log(listOfMovie);
 }
 
 function addMovie(m){

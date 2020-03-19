@@ -26,8 +26,7 @@ $(document).ready(function(){
                // Callback quand on clique sur le bouton play d'un film
                $('#'+e.index).click(function() {
               
-                    $('h1').html('Film en cours : '+e.name);
-                    $('#duree').html(e.length); 
+                createPlayCallback(e);
                });  
   
              });
@@ -47,9 +46,8 @@ $(document).ready(function(){
       play = transform(play);
 
        if(play) $('#play').attr('class', 'fas fa-pause');
-        else $('#play').attr('class', 'fas fa-play');
+      else $('#play').attr('class', 'fas fa-play');
 
-        console.log(play);
       });
       
 });
@@ -77,23 +75,28 @@ function progress(value, max) {
 
 }
 
+// Fonction affichage des étoiles :
 function rank(star) {
   
   var html = '<i class="fas fa-star"></i>';
-  for(i = 0; i < star /2;i++) {
-    html += html;
+  
+  for(i = 0; i < star-1;i++) {
+    html += '<i class="fas fa-star"></i>';
   }
+
   return html;
 }
 
+// Fonction d'affichage d'un film :
 function htmlDivElement(movie){
 
-  var html = "<div class='divFilm'><i class='fas fa-play underFilm' id='"+movie.index+"'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" durée : "+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
+  var html = "<div class='divFilm'><i class='fas fa-play underFilm' id='"+movie.index+"'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
 // completer le code ici
   return html;
 
 }
 
+// Fonction d'ajout d'un objet film :
 function createMovie(i, n, d, r){
 
   var movie = {
@@ -103,12 +106,11 @@ function createMovie(i, n, d, r){
     rank: r
   };
 
-// completer le code ici
   return movie;
 }
 
 function splitFile(data){
-  // completer le code ici
+
   data = data.split('\n');
 
   data.forEach(e => {
@@ -128,6 +130,9 @@ function addMovie(m){
 }
     
 function createPlayCallback(movie) {
+
+  $('h1').html('Film en cours : '+movie.name);
+  $('#duree').html(movie.length); 
 
 }
 

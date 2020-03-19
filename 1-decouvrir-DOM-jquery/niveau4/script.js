@@ -1,4 +1,5 @@
 var listOfMovie = [];
+let play = false;
 
 $(document).ready(function(){
 
@@ -28,6 +29,16 @@ $(document).ready(function(){
   
      });
 
+     // Gestion du bouton de lecture 
+     $('#play').click(function() {
+
+      play = transform(play);
+
+       if(play) $('#play').attr('class', 'fas fa-pause');
+        else $('#play').attr('class', 'fas fa-play');
+
+        console.log(play);
+      });
 });
 
 // Fonction pour mettre true et false d'une boolean sans se faire C. 

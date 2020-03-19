@@ -67,3 +67,9 @@ progress {
     right: 2px;
     top: 2px;
 }
+#list {
+    border: solid 1px grey;
+    background-color: grey;
+    width: 100%;
+    padding-bottom: 1em;
+}

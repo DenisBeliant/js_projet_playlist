@@ -26,11 +26,12 @@ progress {
     font-size: 0.8em;
 }
 .fa-star {
-    font-size: 0.5em;
-    color: yellow;
+    font-size: 0.8em;
+    color: red;
+    margin-right: 1em;
 }
 .fa-star:hover {
-    color: yellow;
+    color: red;
 }
 .underFilm {
     margin: 4px;
@@ -76,6 +77,7 @@ progress {
     width: 50px;
     height: 20px;
 }
+
 .boutonsFilm {
     position: fixed;
     right: 2px;
@@ -84,7 +86,7 @@ progress {
 #list {
 
     margin-top: 3em;
-    background-color: black;
+    cursor: pointer;
     border-radius: 1em;
     width: 90%;
     margin-left: auto;

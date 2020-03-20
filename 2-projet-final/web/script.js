@@ -25,13 +25,15 @@ port.on("message", function (oscMessage) {
             break;
         case "/playIndex":
             console.log("Recu playIndex", oscMessage); 
-            // A COMPLETER           
+            // A COMPLETER   
+            afficheLecture(movie);
+
             break;
 
         case "/playPercentage":
             // A COMPLETER   
             // Changer la valeur de la barre de progression :
-
+            progress(ocsMessage.args);
             break;
     
         default:
@@ -42,13 +44,13 @@ port.on("message", function (oscMessage) {
 //NE PAS TOUCHER
 port.open();
 
-var createMovie = function(i, n, d, r){
+var createMovie = function(m){
    
     var movie = {
-        index: args.i,
-        name: args.n,
-        length: args.d,
-        rank: args.r
+        index: m[0],
+        name: m[1],
+        length: m[2],
+        rank: m[3]
       };
     
       return movie;
@@ -66,57 +68,90 @@ var sendOscMessage = function (oscAddress, arg) {
 };
 
 
-
 $(document).ready(function(){
 
 // A COMPLETER
-    $('#refresh').click(function() {
 
-    visible = transform(visible);
-    console.log(visible);
-
-    if(visible) {
-        
-        $('#list').empty();
-        listOfMovie = [];
-        
-        playlist = refreshPlayslist();
+        // Gestion de la config :
+        $('input').change(function(value) {
             
-            playlist = splitFile(playlist);
-            
-
-            listOfMovie.forEach(e => {
-
-            $('#list').append(htmlDivElement(e));
-
-            // Callback quand on clique sur le bouton play d'un film
-            $('#'+e.index).click(function() {
-            
-            $('progress').attr('max', e.length);
-            createPlayCallback(e);
-            });  
+            if(value.target.type == 'checkbox') valeur = value.target.checked;
+            else valeur = value.target.value;
+            console.log(valeur);
+            sendOscMessage(value.target.name, valeur);
 
         });
+      // Fonction de chamgement de thèmes :
+      $('select').change(function () {
 
-        $('#list').show('slow');
+        val = $('select option:checked').val();
+        $('body').css('background-color', val);
 
-    }
+      });
 
-    else $('#list').hide('slow');
 
-    });
+      $('#refresh').click(function() {
 
-    // Gestion du bouton de lecture 
-    $('#play').click(function() {
+        visible = transform(visible);
+        console.log(visible);
 
-    play = transform(play);
+        if(visible) {
+          
+          $('#list').empty();
+          listOfMovie = [];
+          
+          $.get('./playlist.txt', function(playlist) {
+             
+             playlist = splitFile(playlist);
+  
+             listOfMovie.forEach(e => {
+  
+               $('#list').append(htmlDivElement(e));
+  
+               // Callback quand on clique sur le bouton play d'un film
+               $('#'+e.index).click(function() {
+              
 
-    if(play) $('#play').attr('class', 'fas fa-pause');
-    else $('#play').attr('class', 'fas fa-play');
+                createPlayCallback(e);
+               });  
+  
+             });
+          });
 
-    });
+          $('#list').show('slow');
+
+        }
+
+        else $('#list').hide('slow');
+
+     });
+
+     // Gestion du bouton de lecture 
+     $('#play').click(function() {
+
+      play = transform(play);
+
+       if(play) {
+
+        sendOscMessage("/player/pause", 1);
+        $('#play').attr('class', 'fas fa-pause');
+       } 
+      else {
+          sendOscMessage("/player/play", 1);
+          $('#play').attr('class', 'fas fa-play');
+        } 
+
+      });
 
 });
+
+// Fonction pour mettre true et false d'une boolean sans se faire C. 
+function transform(bool) {
+
+    if(bool) return false;
+    else return true;
+  
+  }
 // Fonction pour convertir la durée en nombre de secondes :
 function timeToDecimal(t) {
 
@@ -126,6 +161,14 @@ function timeToDecimal(t) {
     return parseFloat(parseInt(arr[0], 10) + '.' + (dec<10?'0':'') + dec) * 60;
   
 }   
+
+// Fonction d'actualisation toutes les secondes :
+function actu(){
+    
+    sendOscMessage("/playPercentage");
+    setTimeout('actu()', 1000);
+
+}
 
 // fonction de gestion de la barre de progression :
 function progress(value) {
@@ -145,30 +188,66 @@ var html = '<i class="fas fa-star"></i>';
 return html;
 }
 
+function splitFile(data){
+
+    data = data.split('\n');
+  
+    data.forEach(e => {
+  
+      movie = e.split(',');
+      console.log(movie);
+      addMovie(createMovie(movie[0], movie[1], movie[2], movie[3]));
+      
+    });
+    
+}
+ 
+function addMovie(m){
+
+    listOfMovie.push(m);
+  
+} 
 
 function htmlDivElement(movie){
 
-    var html = "<div class='divFilm'><i class='fas fa-play underFilm' id='"+movie.index+"'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
+    var html = "<div class='divFilm' id='"+movie.index+"'><i class='fas fa-play underFilm'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
     // completer le code ici
       return html;
   
 }
 
-function createPlayCallback( movie){
+function createPlayCallback(movie){
   
     // La fonction callback doit désormais envoyé un message au lecteur vidéo
-    $('h1').html('Film en cours : '+movie.name);
-    $('#duree').html(movie.length); 
+    afficheLecture(movie);
+
+
     // La fonction suivante permet de réaliser l'envoi du message.  
     sendOscMessage("/player/playIndex", movie.index);
 
+}
+
+function afficheLecture(movie) {
+
+    $('.divFilm').css('background-color', 'whitesmoke');
+    $('.divFilm').css('color', 'teal');
+    $('.divFilm').css('margin-left', '0');
+  
+    $('#'+movie.index).css('background-color', 'teal');
+    $('#'+movie.index).css('color', 'white');
+    $('#'+movie.index).css('margin-left', '0.8em');
+  
+    $('#movieOnPlay').html('Film en cours : '+movie.name);
+    $('#duree').html(movie.length); 
+    $('title').html(movie.name);
+  
+    console.log('Name : '+movie.name+' Index : '+movie.index);
 }
 
 function refreshPlayslist(){
 
     console.log("Refresh playlist");  
     // A COMPLETER
-
     
     // Envoit un message au logiciel video pour demander un actualisation de la playlist
     sendOscMessage("/player/refreshPlaylist", 1);

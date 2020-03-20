@@ -4,6 +4,8 @@ let visible = false;
 
 $(document).ready(function(){
 
+
+      // Fonction de chamgement de thèmes :
       $('select').change(function () {
 
         val = $('select option:checked').val();
@@ -33,6 +35,7 @@ $(document).ready(function(){
                // Callback quand on clique sur le bouton play d'un film
                $('#'+e.index).click(function() {
               
+
                 createPlayCallback(e);
                });  
   
@@ -97,7 +100,7 @@ function rank(star) {
 // Fonction d'affichage d'un film :
 function htmlDivElement(movie){
 
-  var html = "<div class='divFilm'><i class='fas fa-play underFilm' id='"+movie.index+"'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
+  var html = "<div class='divFilm' id='"+movie.index+"'><i class='fas fa-play underFilm'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
 // completer le code ici
   return html;
 
@@ -138,8 +141,18 @@ function addMovie(m){
     
 function createPlayCallback(movie) {
 
+  $('.divFilm').css('background-color', 'whitesmoke');
+  $('.divFilm').css('color', 'teal');
+  $('.divFilm').css('margin-left', '0');
+
+  $('#'+movie.index).css('background-color', 'teal');
+  $('#'+movie.index).css('color', 'white');
+  $('#'+movie.index).css('margin-left', '0.8em');
+
   $('h1').html('Film en cours : '+movie.name);
   $('#duree').html(movie.length); 
+
+  console.log('Name : '+movie.name+' Index : '+movie.index);
 
 }
 

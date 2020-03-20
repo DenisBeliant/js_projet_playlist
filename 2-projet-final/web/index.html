@@ -1,35 +1,56 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>osc.js Web Socket Demo</title>
+        <title>Lecteur de film OCS</title>
         <meta charset="UTF-8" />
         <link rel="stylesheet" type="text/css" media="all" href="style.css"></link>
         <script src="node_modules/jquery/dist/jquery.js"></script>
         <script src="node_modules/osc/dist/osc-browser.min.js"></script>
         <script type="text/javascript" src="script.js"></script>
+        <script src="https://kit.fontawesome.com/9679fc5c88.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
 
     <body>
         
-        <div class="topmenu">
-            <p><center><h1>Lecteur de film</h1></center></p>
-
+        <div class="main">
+            <p id="titre"><i class="fas fa-list-ol" id="refresh" title='Cliquez ici pour afficher la liste de film disponible'></i><h1 id="movieOnPlay">Aucun film selectionné</h1> </p>
+    
+            <select name="themes">
+                <option value="">--Changez le thème--</option>
+                <option value="pink">Pink !</option>
+                <option value="teal">Teal !</option>
+                <option value="blue">Blue ! </option>
+                <option value="yellow">Yellow !</option>
+                <option value="black">Darkness..</option>
+                <option value="#d303fc">So hot..</option>
+                <option value="#413d3d">Normal</option>
+            </select>
+        
+            <progress value='0' max='100'></progress><span id='duree'>-h--m</span>
+    
+            <div class='boutonsFilm'>
+                <i class="fas fa-fast-backward" id='back'></i><i class="fas fa-play" id='play'></i><i class="fas fa-fast-forward" id='next'></i></i>
+                <br><label for='vol'>Volume :</label> 
+                <input type="range" id="vol" name="player/volume" min="0" max="2.3">
+            </div> <!--class du bouton pause : fas fa-pause -->
         </div>
        
             
-        <div id="main">
             
             <div id="list" >
-                <p><h1>playlist</h1></p>
+                
             </div>
     
             <div id="config" >
-                <p><h1>config</h1></p>
+                <p><h1>Configuration :</h1></p>
+
+                <input type='checkbox' name="/player/vflip">Flip screen</input><br>
+                <input type='checkbox' name="/player/autoNext">Auto Next</input><br>
+                <input type="text" name="player/message" placeholder="Message sur l'écran"/>
+
+
             </div>
-
-
-        </div>
-
 
         
     </body>

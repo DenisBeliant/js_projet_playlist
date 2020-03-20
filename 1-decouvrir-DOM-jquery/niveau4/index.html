@@ -16,6 +16,17 @@
 <body>
     <div id="main">
       <p id="titre"><i class="fas fa-list-ol" id="refresh" title='Cliquez ici pour afficher la liste de film disponible'></i><h1>Aucun film selectionné</h1> </p>
+
+      <select name="themes">
+        <option value="">--Changez le thème--</option>
+        <option value="pink">Pink !</option>
+        <option value="teal">Teal !</option>
+        <option value="blue">Blue ! </option>
+        <option value="yellow">Yellow !</option>
+        <option value="black">Darkness..</option>
+        <option value="#413d3d">Normal</option>
+    </select>
+
       <progress value='0' max='100'></progress><span id='duree'>-h--m</span>
 
       <div class='boutonsFilm'><i class="fas fa-fast-backward" id='back'></i><i class="fas fa-play" id='play'></i><i class="fas fa-fast-forward" id='next'></i></i></div> <!--class du bouton pause : fas fa-pause --> 

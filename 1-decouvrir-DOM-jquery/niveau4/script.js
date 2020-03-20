@@ -4,6 +4,13 @@ let visible = false;
 
 $(document).ready(function(){
 
+      $('select').change(function () {
+
+        val = $('select option:checked').val();
+        $('body').css('background-color', val);
+
+      });
+
       // completer le code ici
       $('#refresh').click(function() {
 

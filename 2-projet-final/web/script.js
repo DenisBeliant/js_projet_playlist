@@ -20,7 +20,17 @@ port.on("message", function (oscMessage) {
 
                 console.log("Recu addMovie", oscMessage);
                 var movie = createMovie(oscMessage.args);
+                console.log(movie);
+
+                
                 listOfMovie.push(movie);
+
+                $('#list').append(htmlDivElement(movie));
+
+                $('#'+movie.index).click(function() {
+        
+                    createPlayCallback(movie);
+                });
     
             break;
         case "/playIndex":
@@ -49,9 +59,10 @@ port.open();
 
 var createMovie = function(m){
    
+    console.log(m);
     var movie = {
         index: m[1],
-        name: m[0]
+        name: m[0],
       };
     
       return movie;
@@ -72,6 +83,16 @@ var sendOscMessage = function (oscAddress, arg) {
 $(document).ready(function(){
 
 // A COMPLETER
+
+        // Gestion des boutons suivant et précédent :
+        $('.change').click(function(value){
+            let index = value.target.id;
+            if(index < 0) index = listOfMovie.length - 1;
+            if(index > listOfMovie.length - 1) index = 0;
+            console.log(index);
+            sendOscMessage("/player/playIndex", index);
+            afficheLecture(listOfMovie[index]);
+        })
 
         // Gestion de la config :
         $('input').change(function(value) {
@@ -190,8 +211,9 @@ function addMovie(m){
 
 function htmlDivElement(movie){
 
-    var html = `<div class='divFilm' id='${movie.index}'><i class='fas fa-play underFilm'></i><div class='divIndex'>${movie.index}</div><div class='divTitle'>${movie.name} :</div>`;
+    var html = `<div class='divFilm' id='${movie.index}'><div class='divIndex'>${movie.index}</div><div class='divTitle'>${movie.name}</div>`;
     // completer le code ici
+
       return html;
   
 }
@@ -220,30 +242,12 @@ function afficheLecture(movie) {
     $('#movieOnPlay').html('Film en cours : '+movie.name);
     $('#duree').html(movie.length); 
     $('title').html(movie.name);
+
+    $('.fa-fast-backward').attr('id', movie.index - 1);
+    $('.fa-fast-forward').attr('id', movie.index + 1);
   
     console.log('Name : '+movie.name+' Index : '+movie.index);
 }
-
-function refreshPlayslist(){
-
-          
-            listOfMovie.forEach(e => {
-        
-            $('#list').append(htmlDivElement(e));
-        
-            // Callback quand on clique sur le bouton play d'un film
-            $('#'+e.index).click(function() {
-        
-                createPlayCallback(e);
-            });
-        
-            
-            });
-
-            $('#list').show('slow');
-     
-}
-
 
 
 

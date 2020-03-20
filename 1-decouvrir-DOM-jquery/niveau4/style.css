@@ -1,9 +1,11 @@
 body {
-    background-color: black;
+    background-color: #413d3d;
     font: caption;
 }
 h1 {
     color: teal;
+    font-size: 1em;
+    margin-left: 40%;
     text-decoration: underline;
 }
 i {

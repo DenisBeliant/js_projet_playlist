@@ -12,18 +12,16 @@ var port = new osc.WebSocketPort({
 // Cette fonction est appelée lorsqu'un message provenant du logiciel vidéo est arrivé
 port.on("message", function (oscMessage) {
 
-    console.log(oscMessage.address);
     
     switch (oscMessage.address) {
         case "/addMovie":
             // Ajouter 1 film à la playlist. Les films sont envoyés un par un
             // Normalement tout est écrit 
-            console.log("Recu addMovie", oscMessage);
-            var movie = createMovie(oscMessage.args);
-            listOfMovie.push(movie);
-            $("#list").append(htmlDivElement(movie));
-            createPlayCallback(movie);
 
+                console.log("Recu addMovie", oscMessage);
+                var movie = createMovie(oscMessage.args);
+                listOfMovie.push(movie);
+    
             break;
         case "/playIndex":
             console.log("Recu playIndex", oscMessage); 
@@ -37,17 +35,6 @@ port.on("message", function (oscMessage) {
             // Changer la valeur de la barre de progression :
             progress(oscMessage.args);
             break;
-        case '/player/refreshPlaylist':
-
-            refreshPlayslist(oscMessage.args);
-    
-            break;
-        case '/player/ActualFrame':
-
-            console.log(oscMessage.args);
-            preview(oscMessage.args);
-    
-            break;
 
         default:
             break;
@@ -56,10 +43,6 @@ port.on("message", function (oscMessage) {
 
 });
 
-// Fonction d'affichage de la preview :
-function preview(url) {
-    $('#preview img').attr('src', ulr);
-}
 
 //NE PAS TOUCHER
 port.open();
@@ -67,10 +50,8 @@ port.open();
 var createMovie = function(m){
    
     var movie = {
-        index: m[0],
-        name: m[1],
-        length: m[2],
-        rank: m[3]
+        index: m[1],
+        name: m[0]
       };
     
       return movie;
@@ -112,9 +93,13 @@ $(document).ready(function(){
 
       $('#refresh').click(function() {
 
+        listOfMovie = [];
+        $('#list').html('');
         
+
     // Envoit un message au logiciel video pour demander un actualisation de la playlist
     sendOscMessage("/player/refreshPlaylist", 1);
+
 
 
     });
@@ -160,7 +145,7 @@ function timeToDecimal(t) {
 function actu(){
     
     sendOscMessage("/player/Percentage");
-    sendOscMessage("/player/printActualFrame");
+    refreshPlayslist();
     setTimeout('actu()', 5000);
 
 }
@@ -205,7 +190,7 @@ function addMovie(m){
 
 function htmlDivElement(movie){
 
-    var html = "<div class='divFilm' id='"+movie.index+"'><i class='fas fa-play underFilm'></i><div class='divIndex'>"+movie.index+"</div><div class='divTitle'>"+movie.name+" :"+movie.length+"</div><div class='rank'>"+rank(movie.rank)+"</div></div>";
+    var html = `<div class='divFilm' id='${movie.index}'><i class='fas fa-play underFilm'></i><div class='divIndex'>${movie.index}</div><div class='divTitle'>${movie.name} :</div>`;
     // completer le code ici
       return html;
   
@@ -239,39 +224,26 @@ function afficheLecture(movie) {
     console.log('Name : '+movie.name+' Index : '+movie.index);
 }
 
-function refreshPlayslist(playlist){
+function refreshPlayslist(){
 
-    visible = transform(visible);
-    console.log(visible);
-
-    if(visible) {
           
-        $('#list').empty();
-        listOfMovie = [];
+            listOfMovie.forEach(e => {
+        
+            $('#list').append(htmlDivElement(e));
+        
+            // Callback quand on clique sur le bouton play d'un film
+            $('#'+e.index).click(function() {
+        
+                createPlayCallback(e);
+            });
+        
+            
+            });
 
-        $('#list').show('slow');
-
-    console.log("Refresh playlist");  
-    // A COMPLETER
-    playlist = splitFile(playlist);
-  
-    listOfMovie.forEach(e => {
-
-      $('#list').append(htmlDivElement(e));
-
-      // Callback quand on clique sur le bouton play d'un film
-      $('#'+e.index).click(function() {
-
-       createPlayCallback(e);
-      });
-      
-    });
-    
+            $('#list').show('slow');
+     
 }
 
-else $('#list').hide('slow');
-
-}
 
 
 

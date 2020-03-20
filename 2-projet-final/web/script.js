@@ -1,5 +1,5 @@
 listOfMovie = [];
-let play = false;
+let play = true;
 let visible = false;
 
 //NE PAS TOUCHER
@@ -11,6 +11,8 @@ var port = new osc.WebSocketPort({
 
 // Cette fonction est appelée lorsqu'un message provenant du logiciel vidéo est arrivé
 port.on("message", function (oscMessage) {
+
+    console.log(oscMessage.address);
     
     switch (oscMessage.address) {
         case "/addMovie":
@@ -33,13 +35,31 @@ port.on("message", function (oscMessage) {
         case "/playPercentage":
             // A COMPLETER   
             // Changer la valeur de la barre de progression :
-            progress(ocsMessage.args);
+            progress(oscMessage.args);
             break;
+        case '/player/refreshPlaylist':
+
+            refreshPlayslist(oscMessage.args);
     
+            break;
+        case '/player/ActualFrame':
+
+            console.log(oscMessage.args);
+            preview(oscMessage.args);
+    
+            break;
+
         default:
             break;
-    }
+        }
+    
+
 });
+
+// Fonction d'affichage de la preview :
+function preview(url) {
+    $('#preview img').attr('src', ulr);
+}
 
 //NE PAS TOUCHER
 port.open();
@@ -64,7 +84,7 @@ var sendOscMessage = function (oscAddress, arg) {
         args: [arg]
     });
 
-    console.log("message OSC envoyé");
+    console.log("message OSC envoyé"+oscAddress+arg);
 };
 
 
@@ -92,39 +112,13 @@ $(document).ready(function(){
 
       $('#refresh').click(function() {
 
-        visible = transform(visible);
-        console.log(visible);
+        
+    // Envoit un message au logiciel video pour demander un actualisation de la playlist
+    sendOscMessage("/player/refreshPlaylist", 1);
 
-        if(visible) {
-          
-          $('#list').empty();
-          listOfMovie = [];
-          
-          $.get('./playlist.txt', function(playlist) {
-             
-             playlist = splitFile(playlist);
-  
-             listOfMovie.forEach(e => {
-  
-               $('#list').append(htmlDivElement(e));
-  
-               // Callback quand on clique sur le bouton play d'un film
-               $('#'+e.index).click(function() {
-              
 
-                createPlayCallback(e);
-               });  
-  
-             });
-          });
+    });
 
-          $('#list').show('slow');
-
-        }
-
-        else $('#list').hide('slow');
-
-     });
 
      // Gestion du bouton de lecture 
      $('#play').click(function() {
@@ -134,11 +128,11 @@ $(document).ready(function(){
        if(play) {
 
         sendOscMessage("/player/pause", 1);
-        $('#play').attr('class', 'fas fa-pause');
+        $('#play').attr('class', 'fas fa-play');
        } 
       else {
           sendOscMessage("/player/play", 1);
-          $('#play').attr('class', 'fas fa-play');
+          $('#play').attr('class', 'fas fa-pause');
         } 
 
       });
@@ -162,11 +156,12 @@ function timeToDecimal(t) {
   
 }   
 
-// Fonction d'actualisation toutes les secondes :
+// Fonction d'actualisation toutes les 5 secondes :
 function actu(){
     
-    sendOscMessage("/playPercentage");
-    setTimeout('actu()', 1000);
+    sendOscMessage("/player/Percentage");
+    sendOscMessage("/player/printActualFrame");
+    setTimeout('actu()', 5000);
 
 }
 
@@ -244,13 +239,38 @@ function afficheLecture(movie) {
     console.log('Name : '+movie.name+' Index : '+movie.index);
 }
 
-function refreshPlayslist(){
+function refreshPlayslist(playlist){
+
+    visible = transform(visible);
+    console.log(visible);
+
+    if(visible) {
+          
+        $('#list').empty();
+        listOfMovie = [];
+
+        $('#list').show('slow');
 
     console.log("Refresh playlist");  
     // A COMPLETER
+    playlist = splitFile(playlist);
+  
+    listOfMovie.forEach(e => {
+
+      $('#list').append(htmlDivElement(e));
+
+      // Callback quand on clique sur le bouton play d'un film
+      $('#'+e.index).click(function() {
+
+       createPlayCallback(e);
+      });
+      
+    });
     
-    // Envoit un message au logiciel video pour demander un actualisation de la playlist
-    sendOscMessage("/player/refreshPlaylist", 1);
+}
+
+else $('#list').hide('slow');
+
 }
 
 

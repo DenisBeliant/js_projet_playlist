@@ -30,9 +30,9 @@
             <progress value='0' max='100'></progress><span id='duree'>-h--m</span>
     
             <div class='boutonsFilm'>
-                <i class="fas fa-fast-backward change" id='back'></i><i class="fas fa-pause" id='play'></i><i class="fas fa-fast-forward change" id='next'></i></i>
+                <i class="fas fa-fast-backward change" id="back" value="1"></i><i class="fas fa-pause" id="play"></i><i class="fas fa-fast-forward change" id="next" value="1"></i></i>
                 <br><label for='vol'>Volume :</label> 
-                <input type="range" id="vol" name="player/volume" min="0" max="2.3">
+                <input type="range" id="vol" name="/player/volume" min="0" max="1">
             </div> <!--class du bouton pause : fas fa-pause -->
         </div>
        
@@ -47,9 +47,7 @@
 
                 <input type='checkbox' name="/player/vflip">Flip screen</input><br>
                 <input type='checkbox' name="/player/autoNext">Auto Next</input><br>
-                <input type="text" name="player/message" placeholder="Message sur l'écran"/>
-
-
+                <input type="text" name="/message/message" placeholder="Message sur l'écran"/>
             </div>
         
     </body>

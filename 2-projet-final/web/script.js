@@ -8,7 +8,6 @@ var port = new osc.WebSocketPort({
 });
 
 
-
 // Cette fonction est appelée lorsqu'un message provenant du logiciel vidéo est arrivé
 port.on("message", function (oscMessage) {
 
@@ -20,9 +19,7 @@ port.on("message", function (oscMessage) {
 
                 console.log("Recu addMovie", oscMessage);
                 var movie = createMovie(oscMessage.args);
-                console.log(movie);
-
-                
+        
                 listOfMovie.push(movie);
 
                 $('#list').append(htmlDivElement(movie));
@@ -31,12 +28,26 @@ port.on("message", function (oscMessage) {
         
                     createPlayCallback(movie);
                 });
+   
     
             break;
         case "/playIndex":
             console.log("Recu playIndex", oscMessage); 
             // A COMPLETER   
-            afficheLecture(movie);
+
+            
+            let indexBoutonBack = oscMessage.args[0] - 1;
+            let indexBoutonNext = oscMessage.args[0] + 1;
+
+            if(indexBoutonBack < 0) indexBoutonBack = listOfMovie.length - 1;
+            if(indexBoutonNext > listOfMovie.length - 1) indexBoutonNext = 0;
+
+            console.log(indexBoutonBack + ' ' + indexBoutonNext);
+            
+            $('#back').attr('value', indexBoutonBack);
+            $('#next').attr('value', indexBoutonNext);
+            afficheLecture(listOfMovie[oscMessage.args[0]]);
+            
 
             break;
 
@@ -76,7 +87,7 @@ var sendOscMessage = function (oscAddress, arg) {
         args: [arg]
     });
 
-    console.log("message OSC envoyé"+oscAddress+arg);
+    console.log("message OSC envoyé "+oscAddress+arg);
 };
 
 
@@ -85,24 +96,30 @@ $(document).ready(function(){
 // A COMPLETER
 
         // Gestion des boutons suivant et précédent :
-        $('.change').click(function(value){
-            let index = value.target.id;
-            if(index < 0) index = listOfMovie.length - 1;
-            if(index > listOfMovie.length - 1) index = 0;
-            console.log(index);
-            sendOscMessage("/player/playIndex", index);
-            afficheLecture(listOfMovie[index]);
-        })
+        $('#back').click(function (val) {
+            console.log(val.target.attributes.value.value);
+            let i = parseInt(val.target.attributes.value.value);
+            console.log(i);
+            sendOscMessage("/player/playIndex", i);
+        });
+
+        $('#next').click(function (val) {
+            console.log(val.target.attributes.value.value);
+            let i = parseInt(val.target.attributes.value.value);
+            console.log(i);
+            sendOscMessage("/player/playIndex", i);
+        });
 
         // Gestion de la config :
         $('input').change(function(value) {
             
             if(value.target.type == 'checkbox') valeur = value.target.checked;
-            else valeur = value.target.value;
-            console.log(valeur);
+            else if (value.target.type == 'range') valeur = parseInt(value.target.value);
+            else valeur = String (value.target.value);
+            console.log(value.target.value);
             sendOscMessage(value.target.name, valeur);
-
         });
+        
       // Fonction de chamgement de thèmes :
       $('select').change(function () {
 
@@ -119,9 +136,8 @@ $(document).ready(function(){
         
 
     // Envoit un message au logiciel video pour demander un actualisation de la playlist
+
     sendOscMessage("/player/refreshPlaylist", 1);
-
-
 
     });
 
@@ -142,6 +158,8 @@ $(document).ready(function(){
         } 
 
       });
+
+      sendOscMessage("/player/refreshPlaylist", 1);
 
 });
 
@@ -177,32 +195,6 @@ function progress(value) {
     $('progress').attr('value', value);
 }
 
-// Fonction affichage des étoiles :
-function rank(star) {
-
-var html = '<i class="fas fa-star"></i>';
-
-    for(i = 0; i < star-1;i++) {
-        html += '<i class="fas fa-star"></i>';
-    }
-
-return html;
-}
-
-function splitFile(data){
-
-    data = data.split('\n');
-  
-    data.forEach(e => {
-  
-      movie = e.split(',');
-      console.log(movie);
-      addMovie(createMovie(movie[0], movie[1], movie[2], movie[3]));
-      
-    });
-    
-}
- 
 function addMovie(m){
 
     listOfMovie.push(m);
@@ -231,20 +223,19 @@ function createPlayCallback(movie){
 
 function afficheLecture(movie) {
 
+
     $('.divFilm').css('background-color', 'whitesmoke');
     $('.divFilm').css('color', 'teal');
     $('.divFilm').css('margin-left', '0');
   
     $('#'+movie.index).css('background-color', 'teal');
     $('#'+movie.index).css('color', 'white');
-    $('#'+movie.index).css('margin-left', '0.8em');
+    $('#'+movie.index).css('margin-left', '0.2em');
   
     $('#movieOnPlay').html('Film en cours : '+movie.name);
     $('#duree').html(movie.length); 
     $('title').html(movie.name);
 
-    $('.fa-fast-backward').attr('id', movie.index - 1);
-    $('.fa-fast-forward').attr('id', movie.index + 1);
   
     console.log('Name : '+movie.name+' Index : '+movie.index);
 }
